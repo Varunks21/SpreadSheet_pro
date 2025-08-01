@@ -256,7 +256,8 @@ export function handleFormula(
       // Replace all cell references (cross-sheet supported)
       const replaced = input.replace(/([A-Za-z0-9_]+!)?[A-Z]+\d+/g, (match) => {
         const val = getValueFromCellRef(allSheets, sheetName, match);
-        return typeof val === 'number' ? val : parseFloat(val) || 0;
+        const numVal = typeof val === 'number' ? val : parseFloat(val) || 0;
+        return String(numVal);
       });
 
       return eval(replaced);

@@ -10,7 +10,7 @@ import CellDetails from './CellDetails';
 import ExportExcel from './ExportExcel';
 import AIAnalysis from './AIAnalysis';
 import { handleFormula } from '../utils/formulaEngine';
-import { setDependencyTracker, extractCellRefsFromFormula } from '../utils/formulaEngine';
+import { extractCellRefsFromFormula } from '../utils/formulaEngine';
 
 const Spreadsheet = () => {
   const {
@@ -23,7 +23,6 @@ const Spreadsheet = () => {
     deleteSheet,
     cellDependencies,
     formulaMap,
-    reverseDependencies,
     addDependencies,
     removeDependenciesForCell,
   } = useStore();
@@ -41,7 +40,7 @@ const Spreadsheet = () => {
   const MAX_ROWS = 1000;
   const MAX_COLS = 100;
 
-  const normalizeSheetData = (data: any[][]): any[][] => {
+  const normalizeSheetData = (data: (string | number | null)[][]): (string | number | null)[][] => {
     const maxCols = Math.max(
       MAX_COLS,
       data.reduce((max, row) => Math.max(max, row.length), 0)
@@ -96,9 +95,11 @@ const Spreadsheet = () => {
 
   const sheetData = normalizeSheetData(sheets[activeSheet] || []);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const afterChange = (changes: any[] | null, source: string) => {
     if (changes && source !== 'loadData') {
-      changes.forEach(([row, col, , newValue]) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      changes.forEach(([row, col, , newValue]: any) => {
         const colIndex = typeof col === 'string' ? parseInt(col, 10) : col;
         const cellKey = `${activeSheet}!R${row}C${colIndex}`;
         if (!isNaN(colIndex)) {
@@ -158,6 +159,7 @@ const Spreadsheet = () => {
   const showImport = sheetNames.length === 0 || !imported;
 
   // Style first row as dark, and summary/total rows as dark
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const hotCells = (row: number, col: number) => {
     let className = '';
   
@@ -168,7 +170,7 @@ const Spreadsheet = () => {
       const rowData = sheetData?.[row];
       if (
         rowData &&
-        rowData.some((cell: any) =>
+        rowData.some((cell: string | number | null) =>
           typeof cell === 'string' &&
           (/total/i.test(cell) || /sum/i.test(cell) || /=\s*sum\s*\(/i.test(cell))
         )

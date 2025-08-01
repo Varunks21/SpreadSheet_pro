@@ -10,6 +10,7 @@ interface CellDetailsProps {
 
 const CellDetails = ({ selectedCell, activeSheet }: CellDetailsProps) => {
   const { sheets } = useStore();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [cellValue, setCellValue] = useState<any>('');
   const [cellAddress, setCellAddress] = useState<string>('');
 

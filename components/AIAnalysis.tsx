@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useStore } from '../store';
 
 interface AIAnalysisProps {
@@ -19,7 +19,7 @@ interface AnalysisResult {
 }
 
 const AIAnalysis = ({ className = '' }: AIAnalysisProps) => {
-  const { sheets, activeSheet } = useStore();
+  const { sheets } = useStore();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +28,7 @@ const AIAnalysis = ({ className = '' }: AIAnalysisProps) => {
   const COHERE_API_URL = "https://api.cohere.ai/v1/generate";
 
   const prepareDataForAnalysis = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const allData: any[] = [];
     
     Object.entries(sheets).forEach(([sheetName, sheetData]) => {
@@ -49,6 +50,7 @@ const AIAnalysis = ({ className = '' }: AIAnalysisProps) => {
     return allData;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const analyzeWithCohere = async (data: any[][]) => {
     const dataString = JSON.stringify(data, null, 2);
     
@@ -247,7 +249,7 @@ Format the response as JSON with this structure:
                 
                 <div className="mb-3">
                   <p className="text-sm text-purple-700">
-                    <strong>Total Spending:</strong> ${analysis.spendingAnalysis.totalSpending.toLocaleString()}
+                    <strong>Total Spending:</strong> ${analysis.spendingAnalysis.totalSpending}
                   </p>
                 </div>
 
